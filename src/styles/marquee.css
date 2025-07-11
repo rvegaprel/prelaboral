@@ -1,0 +1,15 @@
+@keyframes scrollLeft {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      /* Mueve todo un ancho equivalente al 50% si duplicas tus items */
+      transform: translateX(-50%);
+    }
+  }
+  
+  .animate-scroll {
+    animation: scrollLeft 20s linear infinite;
+    animation-timing-function: linear;
+  }
+  
