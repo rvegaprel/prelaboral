@@ -7,7 +7,8 @@ import { registerUser, UserData } from '../../services/authService.tsx';
 import { collection, getDocs } from 'firebase/firestore';
 import { firestore } from '../../../firebase.ts';
 import { useNavigate } from 'react-router-dom';
-
+// -- Nuevas Importaciones ---------------------------------
+// import { useForm } from '../../hooks/useForm';
 type OptionType = {
   value: string;
   label: string;
@@ -57,16 +58,24 @@ const RegisterForm: React.FC = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // -- Implementación nuevo firebase - RV -------------------------------------------------------
+  // const { } = useForm({
+
+  // });
+  // ---------------------------------------------------------------------------------------------
+
   // ---------------------------
   // Carga de combos
   // ---------------------------
   useEffect(() => {
     const loadCasasEstudio = async () => {
       const qs = await getDocs(collection(firestore, 'casaEstudios'));
+
       setSectorOptions(
         qs.docs.map((d) => ({ value: d.id, label: d.data().nombre }))
       );
     };
+
     const loadCarreras = async () => {
       const qs = await getDocs(collection(firestore, 'carreras'));
       setCarreraOptions(
@@ -149,6 +158,8 @@ const RegisterForm: React.FC = () => {
     } as unknown as UserData; // cast porque formData incluye campos extra
 
     const result = await registerUser(formData.email, formData.password, userData);
+    console.log(userData);
+
     if (result.success) navigate('/home');
     else {
       setErrorMessage(result.error);
@@ -177,17 +188,15 @@ const RegisterForm: React.FC = () => {
         <div className="flex justify-center mb-8">
           <button
             onClick={() => setIsPostulante(true)}
-            className={`px-4 py-2 mx-2 font-semibold text-gray-700 border-b-2 ${
-              isPostulante ? 'border-blue-500' : 'border-transparent hover:border-gray-300'
-            }`}
+            className={`px-4 py-2 mx-2 font-semibold text-gray-700 border-b-2 ${isPostulante ? 'border-blue-500' : 'border-transparent hover:border-gray-300'
+              }`}
           >
             Postulantes
           </button>
           <button
             onClick={() => setIsPostulante(false)}
-            className={`px-4 py-2 mx-2 font-semibold text-gray-700 border-b-2 ${
-              !isPostulante ? 'border-blue-500' : 'border-transparent hover:border-gray-300'
-            }`}
+            className={`px-4 py-2 mx-2 font-semibold text-gray-700 border-b-2 ${!isPostulante ? 'border-blue-500' : 'border-transparent hover:border-gray-300'
+              }`}
           >
             Empresa
           </button>
@@ -233,14 +242,14 @@ const RegisterForm: React.FC = () => {
 
               {errors.telefono && <p className="text-red-500">{errors.telefono}</p>}
               <PhoneInput
-                  country={'cl'}
-                  value={formData.telefono}
-                  onChange={(value) => setFormData({ ...formData, telefono: value })}
-                  placeholder="Teléfono"
-                  containerClass="w-full mb-4"
-                  inputClass="!w-full !p-2 !border !border-gray-300 !rounded focus:!outline-none focus:!ring-2 focus:!ring-blue-500"
-                  buttonClass="!border !border-r-0 !border-gray-300 !bg-white"
-                />
+                country={'cl'}
+                value={formData.telefono}
+                onChange={(value) => setFormData({ ...formData, telefono: value })}
+                placeholder="Teléfono"
+                containerClass="w-full mb-4"
+                inputClass="!w-full !p-2 !border !border-gray-300 !rounded focus:!outline-none focus:!ring-2 focus:!ring-blue-500"
+                buttonClass="!border !border-r-0 !border-gray-300 !bg-white"
+              />
 
               {errors.carrera && <p className="text-red-500">{errors.carrera}</p>}
               <Select

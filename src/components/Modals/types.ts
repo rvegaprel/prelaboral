@@ -67,17 +67,22 @@ export interface UserData {
 }
 
 export const industryOptions: Option[] = [
-  { value: 'mineria', label: 'Minería' },
+  { value: 'arteDiseno', label: 'Arte y Diseño' },
+  { value: 'cienciasSociales', label: 'Ciencias Sociales' },
   { value: 'construccion', label: 'Construcción' },
+  { value: 'educacion', label: 'Educación' },
+  { value: 'ingenieria', label: 'Ingeniería' },
+  { value: 'mineria', label: 'Minería' },
+  { value: 'salud', label: 'Salud' },
   { value: 'tecnologia', label: 'Tecnología' },
 ];
-  
+
 export const areaOptions: Option[] = [
   { value: 'marketing', label: 'Marketing' },
   { value: 'ventas', label: 'Ventas' },
   { value: 'rrhh', label: 'RR.HH' },
 ];
-  
+
 export const languageOptions: Option[] = [
   { value: 'ingles', label: 'Inglés' },
   { value: 'espanol', label: 'Español' },

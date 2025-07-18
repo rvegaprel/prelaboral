@@ -1,24 +1,43 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, firestore } from '../../../firebase.ts';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import { useForm } from '../../hooks/useForm';
+import { checkingAuthentication } from '../../store/auth/thunks';
+import { logout, login } from '../../store/auth/authSlice';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rut, setRut] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [rut, setRut] = useState('');
   const [error, setError] = useState('');
   const [isPostulante, setIsPostulante] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
+  // -- Nueva llamada agregada por RV utilizanbdo redux -------------------------
+  const dispatch = useDispatch();
+
+  const { email, password, rut, onInputChange } = useForm({
+    email: 'ovega.rodrigo@gmail.com',
+    password: '1234567',
+    rut: ''
+  });
+
+  // ----------------------------------------------------------------------------
+
+
   const handleLogin = async () => {
     setError('');
+    // -- Agrega dispatch RV --
+    dispatch(checkingAuthentication());
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      // console.log(user.uid);
       if (!isPostulante) {
         const userDocRef = doc(firestore, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
@@ -32,16 +51,22 @@ const Login: React.FC = () => {
           throw new Error('Usuario no encontrado en Firestore.');
         }
       }
+      //-- Se agrega dispatch - RV --
+      dispatch(login(user));
+      // ----------------------------
 
       navigate('/home');
     } catch (error: any) {
       setError(error.message || 'Correo electrónico o contraseña incorrectos');
+
+      // -- Se agrega dispatch - RV -------------
+      dispatch(logout(error.message));
     }
   };
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      <div className="md:w-1/2 flex items-center justify-center bg-cover bg-center md:bg-none" 
+      <div className="md:w-1/2 flex items-center justify-center bg-cover bg-center md:bg-none"
         style={{ backgroundImage: "url('/recursos_graficos/landing-background.png')" }}>
         <div className="p-8 md:p-0">
           <img onClick={() => navigate('/')} src="/logos_prelaboral/logo_prelaboral_blanco_nuevo.png" alt="PreLaboral Logo" className="mx-auto mb-8 md:mb-0 w-48 md:w-auto" />
@@ -57,17 +82,15 @@ const Login: React.FC = () => {
           <div className="flex justify-center mb-8">
             <button
               onClick={() => setIsPostulante(true)}
-              className={`px-4 py-2 mx-2 font-semibold text-gray-700 border-b-2 ${
-                isPostulante ? 'border-black' : 'border-transparent hover:border-gray-300'
-              }`}
+              className={`px-4 py-2 mx-2 font-semibold text-gray-700 border-b-2 ${isPostulante ? 'border-black' : 'border-transparent hover:border-gray-300'
+                }`}
             >
               Postulantes
             </button>
             <button
               onClick={() => setIsPostulante(false)}
-              className={`px-4 py-2 mx-2 font-semibold text-gray-700 border-b-2 ${
-                !isPostulante ? 'border-black' : 'border-transparent hover:border-gray-300'
-              }`}
+              className={`px-4 py-2 mx-2 font-semibold text-gray-700 border-b-2 ${!isPostulante ? 'border-black' : 'border-transparent hover:border-gray-300'
+                }`}
             >
               Empresa
             </button>
@@ -78,8 +101,10 @@ const Login: React.FC = () => {
           <input
             type="email"
             placeholder="Email de usuario"
+            name="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={onInputChange}
+            // onChange={(e) => setEmail(e.target.value)}
             className="w-full mb-4 p-2 border border-gray-300 rounded"
           />
 
@@ -87,8 +112,10 @@ const Login: React.FC = () => {
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Contraseña"
+              name='password'
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={onInputChange}
+              // onChange={(e) => setPassword(e.target.value)}
               className="w-full mb-4 p-2 border border-gray-300 rounded"
             />
             <button
@@ -104,8 +131,10 @@ const Login: React.FC = () => {
             <input
               type="text"
               placeholder="RUT de la Empresa"
+              name='rut'
               value={rut}
-              onChange={(e) => setRut(e.target.value)}
+              onChange={onInputChange}
+              // onChange={(e) => setRut(e.target.value)}
               className="w-full mb-4 p-2 border border-gray-300 rounded"
             />
           )}
